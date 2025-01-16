@@ -7,18 +7,16 @@ def do_init() -> None:
     """Prints the init shell script"""
 
     print(
-        """\
-_genv_append_to_env()
-{
-  # based on https://unix.stackexchange.com/a/415028
-  export $1="${!1:+${!1}:}$2"
+        r"""\
+_genv_append_to_env() {
+
+  eval "export $1=\"\${${1}:+\${$1}:}$2\""
 }
 
-_genv_backup_env()
-{
-  if [ -n "${!1}" ]; then
-    export GENV_BACKUP_ENV_$1="${!1}"
-    _genv_append_to_env GENV_BACKUP_ENVS $1
+_genv_backup_env() {
+  if eval '[ -n "${'${1}'}" ]'; then
+    eval "export GENV_BACKUP_ENV_${1}=\"\${${1}}\""
+    _genv_append_to_env GENV_BACKUP_ENVS "$1"
   fi
 }
 
